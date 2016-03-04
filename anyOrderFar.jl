@@ -111,34 +111,36 @@ sigma = std(A_train*beta-y_train)
 h = sigma*ones(p);
 
 
-w = [log(sigma); log(h); log(lambda); beta]; 
+if(true)
+	w = [log(sigma); log(h); log(lambda); beta]; 
 
-#first convert initial values to log-scales
-n_sample = 50; 
+	#first convert initial values to log-scales
+	n_sample = 50; 
 
-for i in 1:1e2
-	#compute gradient 
-	#using only n_sample data points
+	for i in 1:1e2
+		#compute gradient 
+		#using only n_sample data points
 
-	ind = randperm(n)[1:n_sample];
-	data = A_train[ind,:];
-	y = y_train[ind];
+		ind = randperm(n)[1:n_sample];
+		data = A_train[ind,:];
+		y = y_train[ind];
 
-	#compute gradient
-	grad = computeGradient(w,data, y, p); 
+		#compute gradient
+		grad = computeGradient(w,data, y, p); 
 
-	println(w[2+2*p:end])
+		println(w[2+2*p:end])
 
-	w_prev = w; 
-	#update parameters
-	w = w - (1e-3)*(grad/norm(grad));
+		w_prev = w; 
+		#update parameters
+		w = w - (1e-3)*(grad/norm(grad));
+	end
+
+
+	sigma = exp(w[1]);
+	h = exp(w[2:2+p-1]);
+	lambda = exp(w[2+p:2+2*p-1]);
+	beta = w[2+2*p:end];
 end
-
-
-sigma = exp(w[1]);
-h = exp(w[2:2+p-1]);
-lambda = exp(w[2+p:2+2*p-1]);
-beta = w[2+2*p:end];
 
 
 
@@ -147,6 +149,8 @@ beta = w[2+2*p:end];
 ###  Now that we've determined the "optimal hyperparameters", we do prediction 
 ###
 ###############
+
+## We now "train" the model on the data
 
 #set parameters 
 T = size(A_train,1);
@@ -183,13 +187,27 @@ post_mean = X'*mu + (Sigma + X'*K*X)\(X'*K*X)*(y_train-X'*mu);
 post_cov = (Sigma + X'*K*X)\(X'*K*X)*Sigma;
 
 
+#PLOT THE PREDICTION OF THE MODEL ON THE TRAINING DATA 
 figure();
-scatter(1:length(y_train), y_train, label = "true")
+scatter(1:length(y_train), y_train, label = "true", color = "red")
 y_trainvar = diag(post_cov);
-errorbar(1:length(y_train), y_train, y_trainvar.*1.96, label = "prediction");
+errorbar(1:length(y_train), post_mean, y_trainvar.*1.96, label = "prediction");
+ax = gca();
+ax[:set_xlim]([0,T])
+legend();
+xlabel("Days");
+ylabel("log(Price)");
 savefig("figures/train_prediction.eps")
 
 
+ax = gca();
+ax[:set_xlim]([100,400])
+legend();
+savefig("figures/train_prediction_zoomed.eps")
+
+
+
+##We now do prediction on test data
 
 #package up the test features 
 ntest, mtest = size(A_test);
@@ -228,12 +246,29 @@ end
 
 
 #perform prediction
-#calculate posterior mean of future observation 
+#calculate posterior mean and covariance
+# of future observation 
 y_pred = Xtest'*mutest + Xtest'*Kstar'*X*inv(X'*K*X + Sigma)*(y_train-X'*mu);
-scatter(1:length(y_test),y_test, label = "true")
 y_var = diag(Xtest'*(Kstarstar' - Kstar'*X*inv(X'*K*X + Sigma)*X'*Kstar)*Xtest .+sigma^2);
+
+
+#plot
+figure();
+scatter(1:length(y_test),y_test, label = "true", color = "red")
 errorbar(1:length(y_pred), y_pred, y_var.*1.96, label = "prediction");
+legend();
+ax = gca();
+ax[:set_xlim]([0,Ttest])
+xlabel("Days");
+ylabel("log(Price)");
 savefig("figures/test_prediction.eps")
+
+ax = gca();
+ax[:set_xlim]([100,200])
+legend();
+savefig("figures/test_prediction_zoomed.eps")
+
+
 
 
 
@@ -253,7 +288,7 @@ start = 250;
 
 #first data point
 curr_data = A_test[start,:]'; 
-predictions = Float64[]; 
+predictions1 = Float64[]; 
 for(i in 1:t_forward)
 	#generate next point covariance matrix
 	Kstar_next = zeros(p*T, p);
@@ -265,7 +300,7 @@ for(i in 1:t_forward)
 	end
 	#generate prediction 
 	y_pred = curr_data'*beta + curr_data'*Kstar_next'*X*inv(X'*K*X + Sigma)*(y_train-X'*mu);
-	push!(predictions, y_pred[1])
+	push!(predictions1, y_pred[1])
 
 	#shift everything over 1
 	curr_data[2:p] = curr_data[1:(p-1)]
@@ -276,6 +311,8 @@ figure();
 scatter(1:t_forward, y_test[start:t_forward+start-1], label = "true");
 plot(predictions1, label = "predictions");
 legend(); 
+xlabel("Days");
+ylabel("log(price)");
 savefig("figures/sequential_prediction1.eps")
 
 
@@ -304,6 +341,8 @@ figure();
 scatter(1:t_forward, y_test[start:t_forward+start-1], label = "true");
 plot(predictions2, label = "predictions")
 legend(); 
+xlabel("Days");
+ylabel("log(price)");
 savefig("figures/sequential_prediction2.eps")
 
 
