@@ -2,8 +2,7 @@
 
 Julia code that runs Gaussian process regression on the price of Bitcoin. The script
 [`anyOrderFar.jl`](anyOrderFar.jl) generates all the figures of the paper *Gaussian process
-regression*, a final project for the course Stats 370 (Bayesian Statistics); the paper itself
-is not included in this repository.
+regression*, a final project for the course Stats 370 (Bayesian Statistics).
 
 The script reads the daily closing prices in [`dataset/close.json`](dataset/close.json) and
 takes their base-10 logarithm. It uses the first four fifths of the series for training and
@@ -18,11 +17,10 @@ autoregression matrix) are in [`anyOrderFunctions.jl`](anyOrderFunctions.jl).
 
 ## Running
 
-The code was written in March 2016 for a Julia release before 1.0 and does not run on current
-Julia: it uses `srand` ([`anyOrderFar.jl`](anyOrderFar.jl) line 328), which was removed in
-Julia 1.0, and the old PyPlot syntax `ax[:set_xlim]`. There is no `Project.toml`. The
-packages the code loads are `JSON`, `DataStructures`, `PyPlot` (matplotlib through PyCall)
-and `Distributions`.
+The code was written in March 2016 for a Julia release before 1.0 and does not run on
+current Julia: it uses `srand` ([`anyOrderFar.jl`](anyOrderFar.jl) line 328), which was
+removed in Julia 1.0, and the old PyPlot syntax `ax[:set_xlim]`. The packages the code loads
+are `JSON`, `DataStructures`, `PyPlot` (matplotlib through PyCall) and `Distributions`.
 
 With a pre-1.0 Julia and these packages installed, run from the repository directory:
 
@@ -51,8 +49,7 @@ was produced from the CoinDesk Bitcoin Price Index. BPI value data returned as U
 
 ## Authors and citation
 
-The code is by **Ahmed Bou-Rabee**. The repository does not give a citation for the paper, so
-it has no `CITATION.cff`.
+The code is by **Ahmed Bou-Rabee**.
 
 ## License
 
