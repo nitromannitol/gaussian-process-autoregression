@@ -48,7 +48,3 @@ provider's terms.
 | [`anyOrderFunctions.jl`](anyOrderFunctions.jl) | helper functions |
 | [`dataset/`](dataset/) | the price data |
 | [`figures/`](figures/) | the figures of the paper, as EPS and PDF |
-
-## Authors and citation
-
-The code is by **Ahmed Bou-Rabee**.
