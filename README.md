@@ -37,6 +37,8 @@ PDF conversions of the figures.
 2016-02-16, under the key `bpi`. The `disclaimer` field of the file states that "This data
 was produced from the CoinDesk Bitcoin Price Index. BPI value data returned as USD." The
 `time` field records that the file was updated on 2016-02-17.
+The data come from the CoinDesk Bitcoin Price Index, as stated above, and keep their
+provider's terms.
 
 ## Repository layout
 
