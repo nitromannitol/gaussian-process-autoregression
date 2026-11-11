@@ -50,9 +50,3 @@ was produced from the CoinDesk Bitcoin Price Index. BPI value data returned as U
 ## Authors and citation
 
 The code is by **Ahmed Bou-Rabee**.
-
-## License
-
-The code is licensed under the Apache License 2.0; see [`LICENSE`](LICENSE). The data in
-[`dataset/`](dataset/) come from the CoinDesk Bitcoin Price Index, as stated above, and keep
-their provider's terms.
